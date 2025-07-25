@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_categories">
+
+    <!-- 分类列表 Fragment -->
+    <fragment
+        android:id="@+id/navigation_categories"
+        android:name="com.lcz.bartender.presentation.category.CategoryFragment"
+        android:label="@string/title_categories"
+        tools:layout="@layout/fragment_category">
+        <!-- 导航到鸡尾酒列表 -->
+        <action
+            android:id="@+id/action_navigation_categories_to_cocktailListFragment"
+            app:destination="@id/cocktailListFragment" />
+    </fragment>
+
+    <!-- 收藏列表 Fragment -->
+    <fragment
+        android:id="@+id/navigation_favorites"
+        android:name="com.lcz.bartender.presentation.favorites.FavoritesFragment"
+        android:label="@string/title_favorites"
+        tools:layout="@layout/fragment_favorites">
+        <!-- 导航到鸡尾酒详情 (收藏页面也可以查看详情) -->
+        <action
+            android:id="@+id/action_favorites_to_cocktailDetailFragment"
+            app:destination="@id/cocktailDetailFragment" />
+    </fragment>
+
+    <!-- 鸡尾酒列表 Fragment -->
+    <fragment
+        android:id="@+id/cocktailListFragment"
+        android:name="com.lcz.bartender.presentation.cocktaillist.CocktailListFragment"
+        android:label="鸡尾酒列表"
+        tools:layout="@layout/item_cocktail">
+        <!-- 接收 categoryId 参数 -->
+        <argument
+            android:name="categoryId"
+            app:argType="string" />
+        <!-- 导航到鸡尾酒详情 -->
+        <action
+            android:id="@+id/action_cocktailListFragment_to_cocktailDetailFragment"
+            app:destination="@id/cocktailDetailFragment" />
+    </fragment>
+
+    <!-- 鸡尾酒详情 Fragment -->
+    <fragment
+        android:id="@+id/cocktailDetailFragment"
+        android:name="com.lcz.bartender.presentation.cocktaildetail.CocktailDetailFragment"
+        android:label="鸡尾酒详情"
+        tools:layout="@layout/fragment_cocktail_detail">
+        <!-- 接收 cocktailId 参数 -->
+        <argument
+            android:name="cocktailId"
+            app:argType="string" />
+    </fragment>
+
+</navigation>

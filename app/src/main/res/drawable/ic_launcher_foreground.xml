@@ -1,0 +1,30 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- 鸡尾酒杯主体 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M45 30 L40 80 H60 L65 30 H45 Z" />
+
+    <!-- 杯柄 (已从 rect 转换为 path) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M52 80 H56 V90 H52 Z" /> <!-- 定义一个矩形路径：从(52,80)到(56,80)到(56,90)到(52,90)再回到(52,80) -->
+
+    <!-- 杯底 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M40 90 C45 95 65 95 70 90 H40 Z" />
+
+    <!-- 液体/饮品 (微旋涡) -->
+    <path
+        android:fillColor="#8BC34A"
+        android:pathData="M45 35 C50 32 60 32 65 35 L60 45 C55 48 50 48 45 45 L45 35 Z" />
+
+    <!-- 可选: 小圆形装饰 (如橄榄) - 已从 circle 转换为 path -->
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M 64,38 a 3,3 0 1,0 6,0 a 3,3 0 1,0 -6,0 Z" />
+</vector>
