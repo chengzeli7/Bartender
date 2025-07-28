@@ -12,9 +12,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lcz.bartender.databinding.FragmentFavoritesBinding
-import com.lcz.bartender.presentation.cocktaillist.CocktailAdapter
 import com.lcz.bartender.presentation.CocktailWithFavoriteStatus
-import com.lcz.bartender.presentation.cocktaillist.CocktailListFragmentDirections
+import com.lcz.bartender.presentation.cocktaillist.CocktailAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -48,7 +47,8 @@ class FavoritesFragment : Fragment() {
         cocktailAdapter = CocktailAdapter(
             onItemClick = { cocktailId ->
                 // 点击鸡尾酒项时的回调，导航到鸡尾酒详情页面
-                val action = CocktailListFragmentDirections.actionCocktailListFragmentToCocktailDetailFragment(cocktailId)
+                // 使用 FavoritesFragmentDirections 导航到 CocktailDetailFragment
+                val action = FavoritesFragmentDirections.actionFavoritesToCocktailDetailFragment(cocktailId)
                 findNavController().navigate(action)
             },
             onFavoriteClick = { cocktailId, isFavorite ->

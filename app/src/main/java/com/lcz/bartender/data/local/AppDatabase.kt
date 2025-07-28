@@ -3,14 +3,14 @@ package com.lcz.bartender.data.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.lcz.bartender.presentation.category.CategoryEntity
-import com.lcz.bartender.presentation.cocktaillist.CocktailEntity
-import com.lcz.bartender.presentation.FavoriteEntity
-import com.lcz.bartender.presentation.IngredientEntity
 import com.lcz.bartender.data.converter.Converters
 import com.lcz.bartender.data.local.dao.CategoryDao
 import com.lcz.bartender.data.local.dao.CocktailDao
 import com.lcz.bartender.data.local.dao.FavoriteDao
+import com.lcz.bartender.presentation.FavoriteEntity
+import com.lcz.bartender.presentation.IngredientEntity
+import com.lcz.bartender.presentation.category.CategoryEntity
+import com.lcz.bartender.presentation.cocktaillist.CocktailEntity
 
 /**
  * Room 数据库抽象类。

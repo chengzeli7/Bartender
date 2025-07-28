@@ -3,15 +3,17 @@ package com.lcz.bartender.presentation
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowInsetsController
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.forEach
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
-import androidx.navigation.ui.setupWithNavController
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.lcz.bartender.R
 import com.lcz.bartender.databinding.ActivityMainBinding
+import com.lcz.bartender.presentation.cocktaillist.CocktailListFragment
+import com.lcz.bartender.presentation.favorites.FavoritesFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -41,45 +43,68 @@ class MainActivity : AppCompatActivity() {
                     WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
                 )
             } else { // Android 6.0 (API 23) 到 Android 10 (API 29)
-                @Suppress("DEPRECATION")
                 window.decorView.systemUiVisibility =
                     window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
             }
         }
 
-        // 获取 NavController
-        // 注意：这里使用 findNavController(R.id.nav_host_fragment_activity_main)
-        // 因为 NavHostFragment 是 FragmentContainerView 的 name 属性，其 ID 是 nav_host_fragment_activity_main
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as androidx.navigation.fragment.NavHostFragment
-        navController = navHostFragment.navController
+        // 设置 ViewPager2 适配器
+        val pagerAdapter = MainPagerAdapter(this)
+        binding.viewPager.adapter = pagerAdapter
+        // 禁用 ViewPager2 的用户滑动，通过底部导航控制切换
+        binding.viewPager.isUserInputEnabled = false
 
-        // 将 BottomNavigationView 与 NavController 关联
-        binding.bottomNavigationView.setupWithNavController(navController)
-        //禁止长按toast
-        binding.bottomNavigationView.menu.forEach {
-            val view = binding.bottomNavigationView.findViewById<View>(it.itemId)
-            view.setOnLongClickListener {
-                true
-            }
-        }
+        // 设置底部导航栏的选中监听器
+        binding.bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_categories -> {
+                    // 切换到鸡尾酒列表页面 (现在作为左侧Tab)
+                    binding.viewPager.currentItem = 0
+                    true
+                }
 
-        // 添加一个监听器来手动处理底部导航栏的选中状态
-        // 尤其是在从深层导航返回时，确保底部导航栏的选中项正确
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            when (destination.id) {
                 R.id.navigation_favorites -> {
-                    binding.bottomNavigationView.menu.findItem(R.id.navigation_favorites)?.isChecked =
-                        true
+                    // 切换到收藏页面
+                    binding.viewPager.currentItem = 1
+                    true
                 }
 
-                else -> {
-                    binding.bottomNavigationView.menu.findItem(R.id.navigation_categories)?.isChecked =
-                        true
-                }
+                else -> false
             }
         }
 
+        // 确保 ViewPager2 和 BottomNavigationView 保持同步
+        binding.viewPager.registerOnPageChangeCallback(object :
+            androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                binding.bottomNavigationView.menu.getItem(position).isChecked = true
+            }
+        })
+    }
 
+    /**
+     * ViewPager2 的适配器，用于管理不同 Fragment 的页面。
+     */
+    private class MainPagerAdapter(fragmentActivity: FragmentActivity) :
+        FragmentStateAdapter(fragmentActivity) {
+        override fun getItemCount(): Int = 2 // 两个 Tab: 鸡尾酒列表和收藏
+
+        override fun createFragment(position: Int): Fragment {
+            return when (position) {
+                0 -> {
+                    // 第一个 Tab 是鸡尾酒列表页面
+                    // 需要传递一个默认的 categoryId，因为 CocktailListFragment 需要它
+                    val bundle =
+                        Bundle().apply { putString("categoryId", "cocktail") } // 传递空字符串作为默认 categoryId
+                    val cocktailListFragment = CocktailListFragment()
+                    cocktailListFragment.arguments = bundle
+                    cocktailListFragment
+                }
+
+                1 -> FavoritesFragment() // 第二个 Tab 是收藏页面
+                else -> throw IllegalArgumentException("Invalid position: $position")
+            }
+        }
     }
 }

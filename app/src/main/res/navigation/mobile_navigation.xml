@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?> <!-- Changed version from "10.0" to "1.0" -->
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_categories">
+    app:startDestination="@+id/cocktailListFragment"> <!-- 将起始目的地从 navigation_categories 改为 cocktailListFragment -->
 
     <!-- 分类列表 Fragment -->
     <fragment
@@ -34,11 +34,12 @@
         android:id="@+id/cocktailListFragment"
         android:name="com.lcz.bartender.presentation.cocktaillist.CocktailListFragment"
         android:label="鸡尾酒列表"
-        tools:layout="@layout/fragment_cocktail_list">
-        <!-- 接收 categoryId 参数 -->
+        tools:layout="@layout/fragment_cocktail_list"> <!-- 将 tools:layout 从 @layout/item_cocktail 修改为 @layout/fragment_cocktail_list -->
+        <!-- 接收 categoryId 参数，并添加默认值，使其在作为起始目的地时不会报错 -->
         <argument
             android:name="categoryId"
-            app:argType="string" />
+            app:argType="string"
+            android:defaultValue="cocktail" /> <!-- 添加 android:defaultValue="" -->
         <!-- 导航到鸡尾酒详情 -->
         <action
             android:id="@+id/action_cocktailListFragment_to_cocktailDetailFragment"

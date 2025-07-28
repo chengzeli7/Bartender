@@ -1,4 +1,3 @@
-
 package com.lcz.bartender.presentation.cocktaillist
 
 import android.os.Bundle
@@ -36,8 +35,7 @@ class CocktailListFragment : Fragment() {
     private lateinit var cocktailAdapter: CocktailAdapter
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCocktailListBinding.inflate(inflater, container, false)
         return binding.root
@@ -49,17 +47,17 @@ class CocktailListFragment : Fragment() {
         val categoryId = args.categoryId
 
         // 初始化 RecyclerView 和适配器
-        cocktailAdapter = CocktailAdapter(
-            onItemClick = { cocktailId ->
-                // 点击鸡尾酒项时的回调，导航到鸡尾酒详情页面
-                val action = CocktailListFragmentDirections.actionCocktailListFragmentToCocktailDetailFragment(cocktailId)
-                findNavController().navigate(action)
-            },
-            onFavoriteClick = { cocktailId, isFavorite ->
-                // 点击收藏按钮时的回调
-                cocktailListViewModel.toggleFavoriteStatus(cocktailId, isFavorite)
-            }
-        )
+        cocktailAdapter = CocktailAdapter(onItemClick = { cocktailId ->
+            // 点击鸡尾酒项时的回调，导航到鸡尾酒详情页面
+            val action =
+                CocktailListFragmentDirections.actionCocktailListFragmentToCocktailDetailFragment(
+                    cocktailId
+                )
+            findNavController().navigate(action)
+        }, onFavoriteClick = { cocktailId, isFavorite ->
+            // 点击收藏按钮时的回调
+            cocktailListViewModel.toggleFavoriteStatus(cocktailId, isFavorite)
+        })
         binding.recyclerViewCocktails.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = cocktailAdapter

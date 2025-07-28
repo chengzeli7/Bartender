@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.lcz.bartender.R
@@ -55,12 +56,14 @@ class CocktailDetailFragment : Fragment() {
                             .placeholder(android.R.drawable.ic_menu_gallery)
                             .error(android.R.drawable.ic_menu_report_image)
                             .into(binding.cocktailImage)
-                        binding.preparationSteps.text = it.preparationSteps.joinToString("\n") { step -> "• $step" }
-                        binding.ingredientsList.text = it.ingredients.joinToString("\n") { ingredient ->
-                            // 这里需要根据 ingredient.ingredientId 去查找 IngredientEntity 的名称
-                            // 为了简化，暂时直接显示 ID，实际应用中需要通过 ViewModel/Repository 联查
-                            "• ${ingredient.amount} ${ingredient.unit} ${ingredient.ingredientId}"
-                        }
+                        binding.preparationSteps.text =
+                            it.preparationSteps.joinToString("\n") { step -> "• $step" }
+                        binding.ingredientsList.text =
+                            it.ingredients.joinToString("\n") { ingredient ->
+                                // 这里需要根据 ingredient.ingredientId 去查找 IngredientEntity 的名称
+                                // 为了简化，暂时直接显示 ID，实际应用中需要通过 ViewModel/Repository 联查
+                                "• ${ingredient.amount} ${ingredient.unit} ${ingredient.ingredientId}"
+                            }
                         binding.flavorDescription.text = it.flavorDescription?.joinToString(", ")
                         binding.difficulty.text = "难度: ${it.difficulty ?: "未知"}"
                         binding.alcoholStrength.text = "酒精度: ${it.alcoholStrength ?: "未知"}"
@@ -85,6 +88,9 @@ class CocktailDetailFragment : Fragment() {
         // 设置收藏按钮点击监听器
         binding.favoriteButtonDetail.setOnClickListener {
             cocktailDetailViewModel.toggleFavoriteStatus()
+        }
+        binding.backButton.setOnClickListener {
+            findNavController().popBackStack()
         }
     }
 
