@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.lcz.bartender.databinding.FragmentFavoritesBinding
 import com.lcz.bartender.presentation.cocktaillist.CocktailAdapter
 import com.lcz.bartender.presentation.CocktailWithFavoriteStatus
+import com.lcz.bartender.presentation.cocktaillist.CocktailListFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

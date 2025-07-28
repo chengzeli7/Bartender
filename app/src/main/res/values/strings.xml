@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">微醺时刻</string>
-    <string name="title_categories">分类</string>
-    <string name="title_favorites">收藏</string>
+    <string name="title_categories">喝一杯~</string>
+    <string name="title_favorites">收藏夹</string>
     <string name="search_hint">搜索分类...</string>
     <string name="search_hint_cocktail">搜索鸡尾酒...</string>
     <string name="favorite_button_description">收藏按钮</string>

@@ -5,13 +5,13 @@
     <!-- 分类菜单项 -->
     <item
         android:id="@+id/navigation_categories"
-        android:icon="@drawable/ic_category"
+        android:icon="@drawable/icon_category"
         android:title="@string/title_categories" />
 
     <!-- 收藏菜单项 -->
     <item
         android:id="@+id/navigation_favorites"
-        android:icon="@drawable/ic_favorite"
+        android:icon="@drawable/icon_favorite"
         android:title="@string/title_favorites" />
 
 </menu>

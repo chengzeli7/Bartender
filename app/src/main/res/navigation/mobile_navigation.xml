@@ -34,7 +34,7 @@
         android:id="@+id/cocktailListFragment"
         android:name="com.lcz.bartender.presentation.cocktaillist.CocktailListFragment"
         android:label="鸡尾酒列表"
-        tools:layout="@layout/item_cocktail">
+        tools:layout="@layout/fragment_cocktail_list">
         <!-- 接收 categoryId 参数 -->
         <argument
             android:name="categoryId"
