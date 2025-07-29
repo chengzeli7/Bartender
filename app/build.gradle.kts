@@ -8,7 +8,6 @@ plugins {
     // 启用 Hilt Android 插件
     id("com.google.dagger.hilt.android")
     id("androidx.navigation.safeargs.kotlin") // 不需要版本号，因为它在项目级别定义
-
 }
 
 android {
@@ -72,11 +71,11 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     // Jetpack Compose Integration
-    implementation ("androidx.navigation:navigation-compose:2.9.2")
+    implementation("androidx.navigation:navigation-compose:2.9.2")
 
     // Views/Fragments Integration
-    implementation ("androidx.navigation:navigation-fragment:2.9.2")
-    implementation ("androidx.navigation:navigation-ui:2.9.2")
+    implementation("androidx.navigation:navigation-fragment:2.9.2")
+    implementation("androidx.navigation:navigation-ui:2.9.2")
 
     // Kotlin 协程
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
@@ -103,6 +102,8 @@ dependencies {
 
     implementation("com.google.code.gson:gson:2.13.1")
 
+    // 标题栏框架：https://github.com/getActivity/TitleBar
+    implementation("com.github.getActivity:TitleBar:10.5")
 }
 
 // 允许 Hilt 生成代码

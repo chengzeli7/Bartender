@@ -12,8 +12,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lcz.bartender.databinding.FragmentFavoritesBinding
+import com.lcz.bartender.presentation.CocktailDetailActivity
 import com.lcz.bartender.presentation.CocktailWithFavoriteStatus
 import com.lcz.bartender.presentation.cocktaillist.CocktailAdapter
+import com.lcz.bartender.presentation.cocktaillist.FavoritesAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -30,7 +32,7 @@ class FavoritesFragment : Fragment() {
     // 通过 Hilt 注入 ViewModel
     private val favoritesViewModel: FavoritesViewModel by viewModels()
 
-    private lateinit var cocktailAdapter: CocktailAdapter
+    private lateinit var cocktailAdapter: FavoritesAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,12 +46,9 @@ class FavoritesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // 初始化 RecyclerView 和适配器
-        cocktailAdapter = CocktailAdapter(
+        cocktailAdapter = FavoritesAdapter(
             onItemClick = { cocktailId ->
-                // 点击鸡尾酒项时的回调，导航到鸡尾酒详情页面
-                // 使用 FavoritesFragmentDirections 导航到 CocktailDetailFragment
-                val action = FavoritesFragmentDirections.actionFavoritesToCocktailDetailFragment(cocktailId)
-                findNavController().navigate(action)
+                CocktailDetailActivity.actionStart(requireActivity(), cocktailId)
             },
             onFavoriteClick = { cocktailId, isFavorite ->
                 // 点击收藏按钮时的回调，在收藏页面点击则直接移除收藏
@@ -68,10 +67,12 @@ class FavoritesFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 favoritesViewModel.favoriteCocktails.collect { favoriteCocktails ->
                     // 将 CocktailEntity 转换为 CocktailWithFavoriteStatus，因为收藏页面所有项都是已收藏
-                    val cocktailsWithStatus = favoriteCocktails.map { CocktailWithFavoriteStatus(it, true) }
+                    val cocktailsWithStatus =
+                        favoriteCocktails.map { CocktailWithFavoriteStatus(it, true) }
                     cocktailAdapter.submitList(cocktailsWithStatus)
                     // 显示或隐藏“无收藏”提示
-                    binding.textNoFavorites.visibility = if (cocktailsWithStatus.isEmpty()) View.VISIBLE else View.GONE
+                    binding.textNoFavorites.visibility =
+                        if (cocktailsWithStatus.isEmpty()) View.VISIBLE else View.GONE
                 }
             }
         }

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowInsetsController
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
@@ -15,6 +16,7 @@ import com.lcz.bartender.databinding.ActivityMainBinding
 import com.lcz.bartender.presentation.cocktaillist.CocktailListFragment
 import com.lcz.bartender.presentation.favorites.FavoritesFragment
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.core.view.get
 
 /**
  * 主 Activity，应用程序的入口点。
@@ -73,12 +75,20 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        //禁止长按toast
+        binding.bottomNavigationView.menu.forEach {
+            val view = binding.bottomNavigationView.findViewById<View>(it.itemId)
+            view.setOnLongClickListener {
+                true
+            }
+        }
+
         // 确保 ViewPager2 和 BottomNavigationView 保持同步
         binding.viewPager.registerOnPageChangeCallback(object :
             androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                binding.bottomNavigationView.menu.getItem(position).isChecked = true
+                binding.bottomNavigationView.menu[position].isChecked = true
             }
         })
     }

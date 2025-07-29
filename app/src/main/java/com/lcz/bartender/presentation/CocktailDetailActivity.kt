@@ -1,56 +1,68 @@
-package com.lcz.bartender.presentation.cocktaildetail
+package com.lcz.bartender.presentation
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.view.WindowInsetsController
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.navigation.NavController
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.lcz.bartender.R
+import com.lcz.bartender.databinding.ActivityMainBinding
+import com.lcz.bartender.presentation.cocktaillist.CocktailListFragment
+import com.lcz.bartender.presentation.favorites.FavoritesFragment
+import dagger.hilt.android.AndroidEntryPoint
+import androidx.core.view.get
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
-import com.lcz.bartender.R
+import com.hjq.bar.OnTitleBarListener
+import com.hjq.bar.TitleBar
+import com.lcz.bartender.base.BaseActivity
 import com.lcz.bartender.databinding.FragmentCocktailDetailBinding
-import dagger.hilt.android.AndroidEntryPoint
+import com.lcz.bartender.presentation.cocktaildetail.CocktailDetailViewModel
 import kotlinx.coroutines.launch
+import kotlin.getValue
 
 /**
- * 显示单个鸡尾酒详细信息的 Fragment。
- * 使用 @AndroidEntryPoint 注解启用 Hilt 对此 Fragment 的依赖注入。
+ * 显示单个鸡尾酒详细信息的 Activity。
+ * 使用 @AndroidEntryPoint 注解启用 Hilt 对此 Activity 的依赖注入。
  */
 @AndroidEntryPoint
-class CocktailDetailFragment : Fragment() {
+class CocktailDetailActivity : BaseActivity<FragmentCocktailDetailBinding>() {
 
-    private var _binding: FragmentCocktailDetailBinding? = null
-    private val binding get() = _binding!!
-
-    // 通过 Hilt 注入 ViewModel
+    // Change: Pass cocktailId to the ViewModel's constructor
     private val cocktailDetailViewModel: CocktailDetailViewModel by viewModels()
 
-    // 获取导航参数 (cocktailId)
-    private val args: CocktailDetailFragmentArgs by navArgs()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentCocktailDetailBinding.inflate(inflater, container, false)
-        return binding.root
+    override fun initView() {
+        // 从 Intent extras 中检索 cocktailId
+        val cocktailId = intent.getStringExtra(EXTRA_COCKTAIL_ID)
+        if (cocktailId == null) {
+            // 处理未提供 cocktailId 的情况，例如，结束 Activity
+            finish()
+            return
+        }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+    override fun initData() {
         // 观察 ViewModel 中的鸡尾酒详情数据
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 cocktailDetailViewModel.cocktail.collect { cocktail ->
                     cocktail?.let {
                         // 填充 UI 元素
                         binding.cocktailName.text = it.name
+                        binding.titleBar.setTitle(it.name)
                         Glide.with(binding.cocktailImage.context)
                             .load(it.imageUrl)
                             .placeholder(android.R.drawable.ic_menu_gallery)
@@ -75,8 +87,8 @@ class CocktailDetailFragment : Fragment() {
         }
 
         // 观察 ViewModel 中的收藏状态
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 cocktailDetailViewModel.isFavorite.collect { isFavorite ->
                     binding.favoriteButtonDetail.setImageResource(
                         if (isFavorite) R.drawable.ic_favorite_filled else R.drawable.ic_favorite_border
@@ -84,15 +96,29 @@ class CocktailDetailFragment : Fragment() {
                 }
             }
         }
+    }
 
+    override fun initListeners() {
         // 设置收藏按钮点击监听器
         binding.favoriteButtonDetail.setOnClickListener {
             cocktailDetailViewModel.toggleFavoriteStatus()
         }
+        binding.titleBar.setOnTitleBarListener(object : OnTitleBarListener {
+            override fun onLeftClick(titleBar: TitleBar?) {
+                finish()
+            }
+        })
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    companion object {
+        private const val EXTRA_COCKTAIL_ID = "cocktailId" // 定义 extra 键的常量
+
+        // 修改 actionStart 以接受 cocktailId
+        fun actionStart(context: Context, cocktailId: String) {
+            val intent = Intent(context, CocktailDetailActivity::class.java).apply {
+                putExtra(EXTRA_COCKTAIL_ID, cocktailId) // 将 cocktailId 放入 Intent 中
+            }
+            context.startActivity(intent)
+        }
     }
 }

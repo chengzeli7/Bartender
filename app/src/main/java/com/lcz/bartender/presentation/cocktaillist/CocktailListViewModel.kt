@@ -1,19 +1,21 @@
-package com.lcz.bartender.presentation.cocktaillist
+package com.lcz.bartender.presentation.cocktaillist // 包名已更新
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lcz.bartender.data.repository.CocktailRepository
-import com.lcz.bartender.data.repository.FavoriteRepository
+import com.lcz.bartender.data.repository.CocktailRepository // 包名已更新
+import com.lcz.bartender.data.repository.FavoriteRepository // 包名已更新
 import com.lcz.bartender.presentation.CocktailWithFavoriteStatus
 import com.lcz.bartender.presentation.IngredientAmount
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest // 新增导入
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,48 +35,55 @@ class CocktailListViewModel @Inject constructor(
 
     // 从 SavedStateHandle 获取 categoryId
     private val categoryId: String = savedStateHandle.get<String>("categoryId")
-        ?: throw IllegalArgumentException("categoryId is required")
+        ?: "" // 提供默认空字符串，避免作为起始目的地时崩溃
 
-    // MutableStateFlow 用于持有鸡尾酒列表
-    private val _cocktails = MutableStateFlow<List<CocktailEntity>>(emptyList())
-
-    // 修复 CockileEntity 拼写错误为 CocktailEntity
-    val cocktails: StateFlow<List<CocktailEntity>> = _cocktails.asStateFlow()
+    // MutableStateFlow 用于持有当前搜索查询文本
+    private val _searchQuery = MutableStateFlow("") // 初始为空字符串，表示没有搜索
 
     // MutableStateFlow 用于持有收藏的鸡尾酒ID列表
     private val _favoriteCocktailIds = MutableStateFlow<List<String>>(emptyList())
 
-    // 结合鸡尾酒列表和收藏ID列表，生成带有收藏状态的鸡尾酒列表
+    // 结合搜索查询和收藏ID列表，生成带有收藏状态的鸡尾酒列表
+    // 使用 flatMapLatest 监听 _searchQuery 的变化，并根据其值切换数据流
+    @OptIn(ExperimentalCoroutinesApi::class)
     val cocktailsWithFavoriteStatus: StateFlow<List<CocktailWithFavoriteStatus>> =
-        _cocktails.combine(_favoriteCocktailIds) { cocktails, favoriteIds ->
+        _searchQuery.flatMapLatest { query ->
+            if (query.isEmpty()) {
+                // 如果搜索查询为空，根据 categoryId 加载鸡尾酒
+                if (categoryId.isEmpty()) {
+                    cocktailRepository.getAllCocktails() // 加载所有鸡尾酒
+                } else {
+                    cocktailRepository.getCocktailsByCategoryId(categoryId) // 加载特定分类鸡尾酒
+                }
+            } else {
+                // 如果有搜索查询，执行模糊搜索
+                cocktailRepository.searchCocktailsByName(query)
+            }
+        }.combine(_favoriteCocktailIds) { cocktails, favoriteIds ->
             cocktails.map { cocktail ->
                 CocktailWithFavoriteStatus(
                     cocktail = cocktail,
                     isFavorite = favoriteIds.contains(cocktail.id)
                 )
             }
-        }.stateIn( // 使用 stateIn 将 Flow 转换为 StateFlow
+        }.stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(5000), // 当有订阅者时保持活跃，并在最后一个订阅者消失后保持活跃 5 秒
-            emptyList() // 初始值
+            SharingStarted.WhileSubscribed(5000),
+            emptyList()
         )
 
     init {
-        // 在 ViewModel 初始化时加载鸡尾酒数据和收藏状态
-        loadCocktailsByCategoryId(categoryId)
+        // 在 ViewModel 初始化时加载收藏状态
         loadFavoriteCocktailIds()
+        // 鸡尾酒数据流现在由 _searchQuery.flatMapLatest 驱动，无需单独调用 loadCocktailsByCategoryId
     }
 
     /**
-     * 根据分类 ID 从数据仓库加载鸡尾酒数据。
-     * @param categoryId 分类的 ID。
+     * 设置搜索查询文本。
+     * @param query 搜索查询字符串。
      */
-    private fun loadCocktailsByCategoryId(categoryId: String) {
-        viewModelScope.launch {
-            cocktailRepository.getCocktailsByCategoryId(categoryId).collect {
-                _cocktails.value = it
-            }
-        }
+    fun setSearchQuery(query: String) {
+        _searchQuery.value = query
     }
 
     /**
@@ -110,52 +119,7 @@ class CocktailListViewModel @Inject constructor(
     fun insertSampleCocktails(categoryId: String) {
         viewModelScope.launch {
             val sampleCocktails = when (categoryId) {
-                "cocktail" -> listOf(
-                    CocktailEntity(
-                        id = "mojito",
-                        name = "莫吉托",
-                        categoryId = "cocktail",
-                        imageUrl = "https://placehold.co/150x150/000000/FFFFFF?text=Mojito",
-                        preparationSteps = listOf(
-                            "将薄荷叶和青柠角放入杯中...",
-                            "加入朗姆酒和糖浆...",
-                            "倒入苏打水并搅拌。"
-                        ),
-                        ingredients = listOf(
-                            IngredientAmount("rum", "2", "oz"),
-                            IngredientAmount("lime_juice", "1", "oz"),
-                            IngredientAmount("mint_leaves", "6", "片"),
-                            IngredientAmount("sugar_syrup", "0.75", "oz"),
-                            IngredientAmount("soda_water", "适量", "")
-                        ),
-                        flavorDescription = listOf("甜", "酸", "清爽", "草本", "柑橘"),
-                        difficulty = "简单",
-                        alcoholStrength = "中度",
-                        recommendedGlass = "海波杯",
-                        history = "起源于古巴，是海明威最爱的饮品之一。"
-                    ),
-                    CocktailEntity(
-                        id = "margarita",
-                        name = "玛格丽特",
-                        categoryId = "cocktail",
-                        imageUrl = "https://placehold.co/150x150/000000/FFFFFF?text=Margarita",
-                        preparationSteps = listOf(
-                            "用盐在杯沿做装饰...",
-                            "将龙舌兰、橙味利口酒和青柠汁混合...",
-                            "摇匀并倒入杯中。"
-                        ),
-                        ingredients = listOf(
-                            IngredientAmount("tequila", "2", "oz"),
-                            IngredientAmount("orange_liqueur", "1", "oz"),
-                            IngredientAmount("lime_juice", "0.75", "oz")
-                        ),
-                        flavorDescription = listOf("酸", "甜", "柑橘", "烈性"),
-                        difficulty = "中等",
-                        alcoholStrength = "烈性",
-                        recommendedGlass = "玛格丽特杯",
-                        history = "关于玛格丽特的起源有多种说法，最流行的是在墨西哥发明。"
-                    )
-                )
+                "cocktail" -> CocktailData.getList()
 
                 "wine" -> listOf(
                     CocktailEntity(
@@ -178,8 +142,9 @@ class CocktailListViewModel @Inject constructor(
                 else -> emptyList()
 
             }
-            cocktailRepository.insertAllCocktails(sampleCocktails)
+            Log.d("LCZD", "onViewCreated88888: ${sampleCocktails.size}")
 
+            cocktailRepository.insertAllCocktails(sampleCocktails)
         }
     }
 }

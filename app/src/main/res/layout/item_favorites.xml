@@ -19,7 +19,6 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:scaleType="centerCrop"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/avatars" />
@@ -29,47 +28,43 @@
             android:id="@+id/cocktail_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
-            android:gravity="center"
             android:textColor="@color/black"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cocktail_image"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@+id/favorite_button"
+            app:layout_constraintStart_toEndOf="@+id/cocktail_image"
+            app:layout_constraintTop_toTopOf="@+id/cocktail_image"
             tools:text="莫吉托" />
-
-        <!-- 鸡尾酒简单程度 -->
-        <TextView
-            android:id="@+id/cocktail_level"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="8dp"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:textColor="@color/purple_500"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cocktail_name"
-            tools:text="简单" />
 
         <!-- 鸡尾酒简要描述 -->
         <TextView
             android:id="@+id/cocktail_description"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:ellipsize="end"
-            android:gravity="center"
+            android:maxLines="2"
             android:textColor="@color/black"
             android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cocktail_level"
+            app:layout_constraintEnd_toStartOf="@+id/favorite_button"
+            app:layout_constraintStart_toEndOf="@+id/cocktail_image"
+            app:layout_constraintTop_toBottomOf="@+id/cocktail_name"
             tools:text="清爽的薄荷和青柠风味，带有朗姆酒的香甜。" />
+
+        <!-- 收藏按钮 -->
+        <ImageButton
+            android:id="@+id/favorite_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/favorite_button_description"
+            android:src="@drawable/ic_favorite_border"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
