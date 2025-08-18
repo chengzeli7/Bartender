@@ -1,0 +1,30 @@
+[
+    {
+        "merged": "/Users/chengze/.gradle/daemon/8.5/com.example.bartender.app-mergeDebugResources-51:/layout/activity_main.xml",
+        "source": "/Users/chengze/.gradle/daemon/8.5/com.example.bartender.app-main-54:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.example.bartender.app-mergeDebugResources-51:/layout/activity_main.xml",
+        "source": "com.example.bartender.app-main-54:/layout/activity_main.xml"
+    },
+    {
+        "merged": "/Users/chengze/.gradle/daemon/8.5/com.example.bartender.app-mergeDebugResources-51:/layout/item_cocktail.xml",
+        "source": "/Users/chengze/.gradle/daemon/8.5/com.example.bartender.app-main-54:/layout/item_cocktail.xml"
+    },
+    {
+        "merged": "/Users/chengze/.gradle/daemon/8.5/com.example.bartender.app-mergeDebugResources-51:/layout/dialog_cocktail.xml",
+        "source": "/Users/chengze/.gradle/daemon/8.5/com.example.bartender.app-main-54:/layout/dialog_cocktail.xml"
+    },
+    {
+        "merged": "/Users/chengze/.gradle/daemon/8.5/com.example.bartender.app-mergeDebugResources-51:/layout/activity_cocktail_detail.xml",
+        "source": "/Users/chengze/.gradle/daemon/8.5/com.example.bartender.app-main-54:/layout/activity_cocktail_detail.xml"
+    },
+    {
+        "merged": "/Users/chengze/.gradle/daemon/8.5/com.example.bartender.app-mergeDebugResources-51:/layout/fragment_cocktail_list.xml",
+        "source": "/Users/chengze/.gradle/daemon/8.5/com.example.bartender.app-main-54:/layout/fragment_cocktail_list.xml"
+    },
+    {
+        "merged": "/Users/chengze/.gradle/daemon/8.5/com.example.bartender.app-mergeDebugResources-51:/layout/item_ingredient.xml",
+        "source": "/Users/chengze/.gradle/daemon/8.5/com.example.bartender.app-main-54:/layout/item_ingredient.xml"
+    }
+]
